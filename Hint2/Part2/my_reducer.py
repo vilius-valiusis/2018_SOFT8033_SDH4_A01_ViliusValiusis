@@ -64,7 +64,7 @@ if __name__ == '__main__':
     debug = True
 
     # This variable must be computed in the first stage
-    total_petitions = 2912352
+    total_petitions = 21996631
 
     i_file_name = "sort_simulation.txt"
     o_file_name = "reduce_simulation.txt"
