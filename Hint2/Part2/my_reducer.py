@@ -19,6 +19,19 @@ import codecs
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(input_stream, total_petitions, output_stream):
+	map_results = dict()
+	map_percent = dict()
+	for line in input_stream:
+		parts = line.split('\t')
+		if parts[0] in map_results:
+			map_results += parts[1]
+		else:
+			map_results = parts[1]
+	for key,val in map_results.items():
+		map_percent[key] = (val / total_petitions) * 100
+	
+	for key,val in map_results.items():
+		output_stream.write(key + '\t(' + val + map_percent[key] ')')
     pass
 
 # ------------------------------------------
@@ -51,7 +64,7 @@ if __name__ == '__main__':
     debug = True
 
     # This variable must be computed in the first stage
-    total_petitions = ???
+    total_petitions = 2912352
 
     i_file_name = "sort_simulation.txt"
     o_file_name = "reduce_simulation.txt"
