@@ -26,40 +26,56 @@ def sort_by_views(map_reduced_results):
 # FUNCTION extract_information_from_line
 # ------------------------------------------
 def extract_information_from_line(line):
-    ent = line.split('\t(')
-    origin = ent[0]
-    keyval = ent[1].split(' , ')
-    title = keyval[0]
-    total_views = re.findall(r'\d+',keyval[1])[0]
-    return (origin,title,int(total_views))
+    parts = line.split('\t')
+    origin = parts[0]
+    res = parts[1].split(' : ')
+    title = res[0]
+    total_views = res[1]
+
+    return origin,title,total_views
+
+# ------------------------------------------
+# FUNCTION build_top_entries_dict
+# ------------------------------------------
+def build_top_entries_dict(list_sorted_results,num_top_entries):
+    top_entries = dict()
+    count_entries = dict()
+
+    for key,value in list_sorted_results:
+        if key[0] not in count_entries:
+            count_entries[key[0]] = 1
+            top_entries[key[0],key[1]] = value
+        elif count_entries[key[0]] < num_top_entries:
+            count_entries[key[0]] += 1
+            top_entries[key[0],key[1]] = value
+
+
+    return top_entries
 # ------------------------------------------
 # FUNCTION build_output_file
 # ------------------------------------------
-def build_output_file(map_origin,list_sorted_results,num_top_entries,output_stream):
-    entries = 0
-    for key,value in list_sorted_results:
-        if entries < 5:
-            origin = map_origin[key]
-            output_stream.write(origin + "\t(" +  key + "," + str(value) + ")\n")
-            entries += 1
+def build_output_file(top_entries,output_stream):
+    for key,value in top_entries:
+        res = key[0] + "\t(" +  key[1] + "," + str(value) + ")\n"
+        output_stream.write(res)
     return
-
-
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(input_stream, num_top_entries, output_stream):
-    map_reduced_results = dict()
-    map_origin = dict()
+    map_results = dict()
     for line in input_stream:
         origin,title,total_views = extract_information_from_line(line)
-        if title in map_reduced_results:
-            map_reduced_results[title] += total_views
+        if (origin,title) in map_results:
+            map_results[orgin,title] += int(total_views)
         else:
-            map_reduced_results[title] = total_views
-            map_origin[title] = origin
-    list_sorted_results = sort_by_views(map_reduced_results)
-    build_output_file(map_origin,list_sorted_results,num_top_entries,output_stream)
+            map_results[origin,title] = int(total_views)
+
+    list_sorted_results = sort_by_views(map_results)
+    top_entries = build_top_entries_dict(list_sorted_results,num_top_entries)
+    top_entries = sort_by_views(top_entries)
+    print(len(top_entries))
+    build_output_file(top_entries,output_stream)
     pass
 
 # ------------------------------------------

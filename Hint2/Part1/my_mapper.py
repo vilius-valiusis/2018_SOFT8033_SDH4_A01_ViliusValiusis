@@ -15,10 +15,8 @@
 import codecs
 import sys
 
-def build_output_file(mapOrigin,mapResult,output_stream):
-    for key,value in mapResult.items():
-        origin = mapOrigin[key]
-        output_stream.write(origin + "\t(" +  key + " , " + str(value) + ")\n")
+def build_output_file(my_output_stream,total_views):
+    my_output_stream.write("total_views" + "\t" +  str(total_views) + "\n")
     return
 
 
@@ -26,25 +24,15 @@ def build_output_file(mapOrigin,mapResult,output_stream):
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(my_input_stream, my_output_stream):
-    mapOrigin = dict()
-    mapResult = dict()
+    total_views = 0;
     for line in my_input_stream:
         parts = line.split()
-        origin = parts[0]
-        title = parts[1]
         try:
-            total_views = int(parts[2])
+            total_views += int(parts[2])
         except (NameError,UnicodeEncodeError):
             print('Failed value convertion to decimal. Skipping entry.')
             continue
-
-        if title in mapResult:
-            mapResult[title] += total_views
-        else:
-            mapResult[title] = total_views
-        mapOrigin[title] = origin
-
-    build_output_file(mapOrigin,mapResult,my_output_stream)
+    build_output_file(my_output_stream,total_views)
     return
 
 # ------------------------------------------

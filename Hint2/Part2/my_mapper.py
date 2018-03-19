@@ -20,21 +20,22 @@ def build_output_file(map_results,output_stream):
     for key,value in map_results.items():
         total += value
         output_stream.write(key + "\t" + str(value) + "\n")
-
-    print(total)
     return
 
 def extract_information_from_line(line):
     parts = line.split(' ')
     indentifiers = parts[0].split('.')
     language = indentifiers[0]
+    try:
+        total_views = int(parts[2])
+    except (NameError,UnicodeEncodeError):
+        print('Failed value convertion to decimal. Skipping entry.')
 
     if len(indentifiers) > 1:
         project = indentifiers[1]
     else:
         project = 'wikipedia'
-    print(language,project)
-    return (language,project)
+    return (language,project,total_views)
 
 # ------------------------------------------
 # FUNCTION my_map
@@ -43,17 +44,17 @@ def my_map(input_stream, per_language_or_project, output_stream):
     map_results = dict()
 
     for line in input_stream:
-        language,project = extract_information_from_line(line)
+        language,project,total_views = extract_information_from_line(line)
         if per_language_or_project:
             if language in map_results:
-                map_results[language] += 1
+                map_results[language] += total_views
             else:
-                map_results[language] = 1
+                map_results[language] = total_views
         else:
             if project in map_results :
-                map_results[project] += 1
+                map_results[project] += total_views
             else:
-                map_results[project] = 1
+                map_results[project] = total_views
     build_output_file(map_results,output_stream)
     pass
 

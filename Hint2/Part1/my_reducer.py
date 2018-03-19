@@ -15,18 +15,19 @@
 import sys
 import codecs
 
-def build_output_file(output_stream,word_count):
-    output_stream.write('word_count\t' + str(word_count))
+def build_output_file(output_stream,total_views):
+    output_stream.write('total_views\t' + str(total_views))
     return
 
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(input_stream, output_stream):
-    word_count = 0
+    total_views = 0
     for line in input_stream:
-        word_count += 1
-    build_output_file(output_stream,word_count)
+        views = int(line.split("\t")[1])
+        total_views += views
+    build_output_file(output_stream,total_views)
     pass
 
 # ------------------------------------------

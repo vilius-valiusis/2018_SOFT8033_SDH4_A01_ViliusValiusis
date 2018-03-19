@@ -15,33 +15,33 @@
 import sys
 import codecs
 
-def build_output_file(mapOrigin,mapResult,output_stream):
-    for key,value in mapResult.items():
-        origin = mapOrigin[key]
-        output_stream.write(origin + "\t(" +  key + " , " + str(value) + ")\n")
+def build_output_file(map_result,output_stream):
+    for key,value in map_result.items():
+        output_stream.write(key[0] + "\t" + key[1] + " : " + str(value) + "\n")
     return
 
+def extract_information_from_line(line):
+    parts = line.split(' ')
+    origin = parts[0]
+    title = parts[1]
+    total_views = parts[2]
+    return origin,title,total_views
 
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(input_stream, languages, num_top_entries, output_stream):
-    mapOrigin = dict()
-    mapResult = dict()
+    map_result = dict()
     for line in input_stream:
         if any(language in line[:2] for language in languages):
-            parts = line.split()
-            origin = parts[0]
-            title = parts[1]
-            total_views = int(parts[2])
+            origin,title,total_views = extract_information_from_line(line)
 
-            if title in mapResult:
-                mapResult[title] += total_views
+            if (origin,title) in map_result:
+                map_result[origin,title] += int(total_views)
             else:
-                mapResult[title] = total_views
-            mapOrigin[title] = origin
+                map_result[origin,title] = int(total_views)
 
-    build_output_file(mapOrigin,mapResult,output_stream)
+    build_output_file(map_result,output_stream)
     return
 
 # ------------------------------------------
